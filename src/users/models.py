@@ -8,7 +8,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import JSON, Boolean, Column, DateTime
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import String, UniqueConstraint, func, text
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 IDENTITY_SCHEMA = 'identity'
 
@@ -47,8 +47,6 @@ class Tenant(SQLModel, table=True):
         ),
     )
 
-    memberships: list['Membership'] = Relationship(back_populates='tenant')
-
 
 class User(SQLModel, table=True):
     __tablename__ = 'users'  # type: ignore[bad-override]
@@ -75,8 +73,6 @@ class User(SQLModel, table=True):
             server_onupdate=func.now(),
         ),
     )
-
-    memberships: list['Membership'] = Relationship(back_populates='user')
 
 
 class Membership(SQLModel, table=True):
@@ -113,6 +109,3 @@ class Membership(SQLModel, table=True):
             server_onupdate=func.now(),
         ),
     )
-
-    user: User = Relationship(back_populates='memberships')
-    tenant: Tenant = Relationship(back_populates='memberships')

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='.env',  # let pydantic-settings read .env
+        env_file=str(Path(__file__).resolve().parents[2] / '.env'),  # load project-root .env reliably during tests
         case_sensitive=False,  # typical for envs
         extra='ignore',  # ignore unknown env vars
     )
@@ -20,8 +21,9 @@ class Settings(BaseSettings):
     version: str = '0.1.0'
     admin_email: str = 'support@riskary.de'
 
-    postgres_url: SecretStr
-    redis_url: SecretStr
+    # Accept several common environment variable names for DB/Redis URLs
+    postgres_url: SecretStr = Field(validation_alias=AliasChoices('POSTGRES_URL', 'DATABASE_URL', 'POSTGRESQL_URL'))
+    redis_url: SecretStr = Field(validation_alias=AliasChoices('REDIS_URL', 'REDIS_URI'))
 
     # JWT/Auth configuration
     jwt_secret_key: SecretStr = SecretStr('dev-secret-key')

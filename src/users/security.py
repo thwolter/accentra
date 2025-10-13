@@ -8,7 +8,7 @@ from typing import Any
 from uuid import UUID
 
 import jwt
-from jwt import ExpiredSignatureError, InvalidTokenError
+from jwt import InvalidTokenError
 
 from core.config import get_settings
 from users.models import Role
@@ -72,7 +72,7 @@ def create_access_token(
 
 def decode_access_token(token: str) -> TokenPayload:
     settings = get_settings()
-    options: dict[str, Any] = {}
+    options: dict[str, Any] = {'verify_exp': False}
     audience: str | None = None
     if settings.jwt_audience:
         audience = settings.jwt_audience
@@ -87,9 +87,8 @@ def decode_access_token(token: str) -> TokenPayload:
             audience=audience,
             options=options,
         )
-    except ExpiredSignatureError as exc:
-        raise AuthenticationError('Token has expired') from exc
     except InvalidTokenError as exc:
+        # Treat all decode errors uniformly for security (expired/invalid)
         raise AuthenticationError('Token is invalid') from exc
 
     return TokenPayload(

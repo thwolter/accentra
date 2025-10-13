@@ -98,6 +98,18 @@ def register_user(payload: UserCreate, session: Session = Depends(get_session)) 
     return serialize_user(session, user)
 
 
+@router.get('/users/me', response_model=UserWithMemberships, tags=['users'])
+def read_current_user(
+    context: tuple[User, Membership, TokenPayload] = Depends(get_current_context),
+    session: Session = Depends(get_session),
+) -> UserWithMemberships:
+    user, membership, _ = context
+    # Refresh membership to ensure latest data is returned.
+    session.refresh(user)
+    session.refresh(membership)
+    return serialize_user(session, user)
+
+
 @router.get('/users/{user_id}', response_model=UserWithMemberships, tags=['users'])
 def read_user(user_id: UUID, session: Session = Depends(get_session)) -> UserWithMemberships:
     user = get_user(session, user_id)
@@ -137,15 +149,3 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)) -> Tok
         plan=membership.plan,
     )
     return Token(access_token=token)
-
-
-@router.get('/users/me', response_model=UserWithMemberships, tags=['users'])
-def read_current_user(
-    context: tuple[User, Membership, TokenPayload] = Depends(get_current_context),
-    session: Session = Depends(get_session),
-) -> UserWithMemberships:
-    user, membership, _ = context
-    # Refresh membership to ensure latest data is returned.
-    session.refresh(user)
-    session.refresh(membership)
-    return serialize_user(session, user)

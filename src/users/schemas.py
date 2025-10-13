@@ -71,7 +71,8 @@ class UserWithMemberships(UserRead):
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str = Field(..., min_length=8, max_length=256)
+    # Accept any non-empty password to allow proper 401 responses for bad credentials
+    password: str
     tenant_id: UUID
 
 

@@ -1,6 +1,6 @@
 [project]
 name = "accentra"
-version = "0.2.0"
+version = "0.2.1"
 description = "User management"
 authors = [
     { name = "Thomas Wolter", email = "support@riskary.de" },

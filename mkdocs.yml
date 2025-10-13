@@ -1,0 +1,24 @@
+site_name: Accentra Identity Service
+site_description: Documentation for the Accentra tenant and user management API.
+site_dir: site
+
+theme:
+  name: mkdocs
+
+nav:
+  - Overview: index.md
+  - Getting Started: getting-started.md
+  - API:
+      - Identity Service: api/identity.md
+  - Operations: operations.md
+  - Reference:
+      - Configuration: reference/settings.md
+      - Data Model: reference/data-model.md
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - fenced_code
+  - tables
+  - toc:
+      permalink: true

@@ -1,3 +1,9 @@
+## 0.2.2 (2025-10-13)
+
+### Fix
+
+- **pyproject.toml**: restore misplaced `project.urls` section
+
 ## 0.2.1 (2025-10-13)
 
 ### Refactor

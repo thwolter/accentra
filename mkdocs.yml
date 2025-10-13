@@ -3,7 +3,7 @@ site_description: Documentation for the Accentra tenant and user management API.
 site_dir: site
 
 theme:
-  name: mkdocs
+  name: material
 
 nav:
   - Overview: index.md

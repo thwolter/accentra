@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from contextlib import contextmanager
 from typing import Generator
 
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, create_engine
 from tenauth.schemas import AccessContext
 
@@ -18,7 +20,14 @@ def get_engine() -> Engine:
     if _engine is None:
         settings = get_settings()
         url = settings.pg_vector_url.get_secret_value()
-        _engine = create_engine(url, echo=settings.debug or False, pool_pre_ping=True, pool_recycle=3600)
+        if url.startswith('sqlite'):
+            connect_args = {'check_same_thread': False}
+            engine_kwargs: dict[str, object] = {'echo': settings.debug or False}
+            if ':memory:' in url:
+                engine_kwargs['poolclass'] = StaticPool
+            _engine = create_engine(url, connect_args=connect_args, **engine_kwargs)
+        else:
+            _engine = create_engine(url, echo=settings.debug or False, pool_pre_ping=True, pool_recycle=3600)
     return _engine
 
 
@@ -63,3 +72,8 @@ def session_scope(access_context: AccessContext | None = None) -> Generator[Sess
         if access_context is not None:
             _reset_access_context(session)
         session.close()
+
+
+def get_session_dependency() -> Iterator[Session]:
+    with session_scope() as session:
+        yield session

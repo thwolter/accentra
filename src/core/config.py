@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import lru_cache
 from typing import Literal
 
@@ -20,6 +22,13 @@ class Settings(BaseSettings):
 
     postgres_url: SecretStr
     redis_url: SecretStr
+
+    # JWT/Auth configuration
+    jwt_secret_key: SecretStr = SecretStr('dev-secret-key')
+    jwt_algorithm: Literal['HS256'] = 'HS256'
+    jwt_access_token_ttl_minutes: int = 60
+    jwt_issuer: str | None = None
+    jwt_audience: str | None = None
 
     log_level: Literal['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'] = 'INFO'
     otlp_endpoint: str | None = None

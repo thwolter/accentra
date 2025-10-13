@@ -10,7 +10,9 @@ from sqlalchemy import engine_from_config, pool, text
 from sqlmodel import SQLModel
 
 from alembic import context
-from metadata import models  # noqa: F401  # ensure models import for metadata
+from users import (  # noqa: F401  # ensure models import for alembic
+    models as users_models,
+)
 
 config = context.config
 
@@ -40,7 +42,7 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         include_schemas=True,
         version_table='alembic_version',
-        version_table_schema='metadata',
+        version_table_schema='identity',
     )
 
     with context.begin_transaction():
@@ -52,15 +54,15 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(section, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
-        # Ensure the metadata schema exists; make it idempotent and commit the DDL so it isn't rolled back
-        connection.execute(text('CREATE SCHEMA IF NOT EXISTS "metadata"'))
+        # Ensure the identity schema exists; make it idempotent and commit the DDL so it isn't rolled back
+        connection.execute(text('CREATE SCHEMA IF NOT EXISTS "identity"'))
         connection.commit()
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
             include_schemas=True,
             version_table='alembic_version',
-            version_table_schema='metadata',
+            version_table_schema='identity',
         )
 
         with context.begin_transaction():

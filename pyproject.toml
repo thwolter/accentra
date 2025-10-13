@@ -1,6 +1,6 @@
 [project]
 name = "accentra"
-version = "0.2.0"
+version = "0.1.0"
 description = "User management"
 authors = [
     { name = "Thomas Wolter", email = "support@riskary.de" },
@@ -20,6 +20,9 @@ dependencies = [
     "dramatiq>=1.16.0",
     "redis>=6.4.0",
     "tenauth @ git+https://github.com/thwolter/fde-tenauth.git@main",
+    "pydantic[email]>=2.12.0",
+    "uvicorn>=0.37.0",
+    "pyjwt>=2.10.1",
 ]
 [dependency-groups]
 dev = [

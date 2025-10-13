@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from core import configure_logging, get_settings, init_observability
-from metadata.api import router as metadata_router
+from users.api import router as identity_router
 
 
 def create_app() -> FastAPI:
@@ -19,7 +19,7 @@ def create_app() -> FastAPI:
     async def readyz():  # pragma: no cover - trivial endpoint
         return {'status': 'ready'}
 
-    application.include_router(metadata_router)
+    application.include_router(identity_router)
     return application
 
 

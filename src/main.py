@@ -7,6 +7,8 @@ from users.api import router as identity_router
 origins = [
     'http://localhost',
     'http://localhost:3000',
+    'https://localhost',
+    'https://localhost:3000',
 ]
 
 

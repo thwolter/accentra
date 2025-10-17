@@ -51,6 +51,10 @@ RUN pip install --no-cache-dir /tmp/wheels/* \
 COPY alembic.ini ./alembic.ini
 COPY alembic ./alembic
 COPY src ./src
+COPY scripts ./scripts
+
+COPY scripts/docker-entrypoint.sh ./scripts/docker-entrypoint.sh
+RUN chmod +x ./scripts/docker-entrypoint.sh
 
 ENV PYTHONPATH=/app/src \
     HOST=0.0.0.0 \
@@ -58,4 +62,4 @@ ENV PYTHONPATH=/app/src \
 
 EXPOSE 8000
 
-ENTRYPOINT ["python","-m","uvicorn","src.main:app","--host","0.0.0.0","--port","8000"]
+ENTRYPOINT ["./scripts/docker-entrypoint.sh"]

@@ -86,7 +86,10 @@ class Membership(SQLModel, table=True):
     user_id: UUID = Field(foreign_key=f'{IDENTITY_SCHEMA}.users.id', nullable=False)
     tenant_id: UUID = Field(foreign_key=f'{IDENTITY_SCHEMA}.tenants.id', nullable=False)
     role: Role = Field(
-        sa_column=Column(SqlEnum(Role, name='identity_role', create_constraint=True), nullable=False),
+        sa_column=Column(
+            SqlEnum(Role, name='identity_role', schema=IDENTITY_SCHEMA, create_constraint=True),
+            nullable=False,
+        ),
     )
     scopes: list[str] = Field(
         default_factory=list,

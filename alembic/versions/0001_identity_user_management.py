@@ -15,8 +15,6 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute('CREATE SCHEMA IF NOT EXISTS identity;')
-
     op.create_table(
         'tenants',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
@@ -52,7 +50,15 @@ def upgrade() -> None:
     )
     op.create_index('ix_identity_users_email', 'users', ['email'], unique=True, schema='identity')
 
-    role_enum = postgresql.ENUM('owner', 'admin', 'editor', 'viewer', name='identity_role', create_type=False)
+    role_enum = postgresql.ENUM(
+        'owner',
+        'admin',
+        'editor',
+        'viewer',
+        name='identity_role',
+        schema='identity',
+        create_type=False,
+    )
     role_enum.create(op.get_bind(), checkfirst=True)
 
     op.create_table(
@@ -101,6 +107,3 @@ def downgrade() -> None:
     op.drop_table('users', schema='identity')
 
     op.drop_table('tenants', schema='identity')
-
-    op.execute('DROP TYPE IF EXISTS identity_role;')
-    op.execute('DROP SCHEMA IF EXISTS identity CASCADE;')

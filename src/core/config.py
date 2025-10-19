@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import AliasChoices, Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from core.helper import parse_cors_origins
 
 
 class Settings(BaseSettings):
@@ -38,7 +40,12 @@ class Settings(BaseSettings):
     otel_logs_enabled: bool = False
     otel_traces_enabled: bool = True
     otel_metrics_enabled: bool = True
-    internal_auth_token: SecretStr = SecretStr('dev-internal-token')
+    cors_allow_origins: tuple[str, ...] = ()
+
+    @field_validator('cors_allow_origins', mode='before')
+    @classmethod
+    def normalize_cors_origins(cls, value: Any) -> tuple[str, ...]:
+        return parse_cors_origins(value)
 
     @property
     def pg_vector_url(self) -> SecretStr:

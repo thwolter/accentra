@@ -22,7 +22,8 @@ COPY pyproject.toml uv.lock* ./
 COPY src ./src
 
 # Pre-build wheels for the project and all dependencies declared in pyproject.toml
-RUN pip wheel --wheel-dir /tmp/wheels .
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip wheel --wheel-dir /tmp/wheels .
 
 
 FROM python:${PYTHON_VERSION} AS runtime

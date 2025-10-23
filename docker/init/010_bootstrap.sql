@@ -44,6 +44,23 @@ ALTER DEFAULT PRIVILEGES FOR ROLE accentra_alembic_user IN SCHEMA identity
 ALTER DEFAULT PRIVILEGES FOR ROLE accentra_alembic_user IN SCHEMA identity
   GRANT EXECUTE ON FUNCTIONS TO accentra_rw, accentra_ro;
 
+-- Ensure role connections default to the identity schema
+DO $$
+DECLARE
+  db_name text := current_database();
+BEGIN
+  EXECUTE format(
+    'ALTER ROLE %I IN DATABASE %I SET search_path = identity, public',
+    'accentra_app_user',
+    db_name
+  );
+  EXECUTE format(
+    'ALTER ROLE %I IN DATABASE %I SET search_path = identity, public',
+    'accentra_alembic_user',
+    db_name
+  );
+END$$;
+
 -- Optional: enable pgcrypto for gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 

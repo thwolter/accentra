@@ -1,3 +1,13 @@
+## 0.3.0 (2025-10-25)
+
+### Feat
+
+- **db, infra**: configure role-specific search_path and update SQL dialect
+- **api, infra**: enhance CORS handling and enable Uvicorn live reload
+- **db, infra**: implement role-based schema setup and Docker Compose
+- **api**: add HTTPS localhost origins to CORS configuration
+- **app**: enable CORS middleware for local development
+
 ## 0.2.2 (2025-10-13)
 
 ### Fix
